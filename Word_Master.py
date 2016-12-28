@@ -2,8 +2,10 @@ import random
 import urllib.request
 
 ## Make sure you have wifi connectivity when playing this game
-
+# The line below sets up the global variable "lets" that contains all of the letters of the alphabet
+lets=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 class setUp(object): # A class that sets up the game
+
     def __init__(self):
         pass
     
@@ -90,32 +92,32 @@ class setUp(object): # A class that sets up the game
             entered=[]# Used to check the entered letters
             copyBoard=game.copyBoard(copyBoard) #Copies the board
             print(allLetters[playerTurn])
-            skip=input('Would you like to PLAY your turn or SKIP? ')[0].lower()
-            if skip=='s':
-                allLetters[playerTurn]=game.passLet(allLetters[playerTurn])
-                print ('Player '+str(playerTurn+1)+' your letters are now: ')
-                print(allLetters[playerTurn])
-                return(board)
-            
             try: #If an error occurs, it will prompt the user for the letters they would like to input again
+                skip=input('Would you like to PLAY your turn, SKIP, or EXIT? ')[0].lower()
+                if skip=='s':
+                    allLetters[playerTurn]=game.passLet(allLetters[playerTurn])
+                    print ('Player '+str(playerTurn+1)+' your letters are now: ')
+                    print(allLetters[playerTurn])
+                    return(board)
+                elif skip=='e':
+                    return 'exit' #add functions
+                
                 wordLength=int(input("Enter the number of letters you would like to add to the board: "))
+                word=input("Enter position numbers and letters in the form 'position letter' (ex: M11) with no spaces and separated by spaces:").split(" ")
+                wordString=input("Enter the resultant word you are trying to spell: ").upper()   
+                for i in range(wordLength): #iterates through each entry in word and generates a preview of the word
+                    pos=int(word[i][1:])
+                    let=word[i][0].upper()
+                    entered.append(let)    
+                    if len(word[i])==3:
+                        copyBoard[pos]=let+' '
+                    else:   
+                        copyBoard[pos]=let
             except:
+                print ('Ooops, you may have entered an invalid input earlier.')
                 enterWord(board,copyBoard,allLetters,playerScoresDict)
             
-            word=input("Enter position numbers and letters in the form 'position letter' (ex: M11) with no spaces and separated by spaces:").split(" ")
-            wordString=input("Enter the resultant word you are trying to spell: ").upper()   
-            for i in range(wordLength): #iterates through each entry in word and generates a preview of the word
-                try: #Tries to access the word. If it is possible, then no error will occur
-                    pos=int(word[i][1:])
-                except:
-                    enterWord(board,copyBoard,allLetters,playerScoresDict) #Call to the same function for entering words
-                let=word[i][0].upper()
-                entered.append(let) 
-                if len(word[i])==3:
-                    copyBoard[pos]=let+' '
-                else:   
-                    copyBoard[pos]=let
-            print (entered) #remove later
+            
             entered=''.join(entered)
             game.drawBoard(copyBoard)
             ans=input ('Is this the word that you expected on the board? (y/n) ')[0].lower()
@@ -142,7 +144,9 @@ class setUp(object): # A class that sets up the game
                 print ('Your letters are now' + str(allLetters[playerTurn]))
             return board
         setUp(board,playerTurn,allLetters)
-        enterWord(board,copyBoard,allLetters,playerScoresDict)
+        a=enterWord(board,copyBoard,allLetters,playerScoresDict)
+        if a=='exit':
+            return 'exit'
         return board
     
     def moveCheck(self,entered,playerLetters,board): #Takes argument of the word inputed and the player's letters
@@ -173,7 +177,6 @@ class setUp(object): # A class that sets up the game
         return playerScores
     
     def replaceLet(self,letList,allLetters):# A method that replaces the letter of the player who just played
-        lets=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
         random.shuffle(lets) #Shuffles arrangements of the letters
         for char in letList: #Removes the used letters
             allLetters.remove(char)
@@ -182,7 +185,6 @@ class setUp(object): # A class that sets up the game
         return allLetters
     
     def passLet(self,allLetters): #Adds letters for the person who just passed
-        lets=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
         random.shuffle(lets)
         allLetters=allLetters[0:5]+lets[0:2]
         return allLetters
@@ -193,7 +195,7 @@ class gameStart(object):
         for i in range(0,100):
             board.append(str(i))
         return board
-    def setUp(self,board): #Calls ot the set up class above
+    def setUp(self,board): #Calls to the set up class above
         global game
         game=setUp()
         game.drawBoard(board)
@@ -212,11 +214,22 @@ class gameStart(object):
     def gameRun(self,play,board,allLetters,playerScores,num): #Runs the actual game
         while(1):    
             board=game.makeMove(play,board,allLetters,playerScores)
+            if board=='exit':
+                print ("Thank you for playing word-master. We hope you enjoyed your experience!")
+                max=0
+                for key,value in playerScores.items():
+                    print ('Player '+str(key)+': '+str(value)+ ' points')
+                    if playerScores[key]>max:
+                        max=value
+                        winner=key
+                print ('Player '+ str(winner)+', with '+str(value)+' points, is the winner!!!!')
+                break
             play+=1
-            if play>=num-1:
+            if play>=num:
                 play=0
+
 #Calls the methods from the classes to start actual game
 start=gameStart()
 board=start.boardNums()
 play,board,allLetters,playerScores,num=start.setUp(board)
-start.gameRun(play,board,allLetters,playerScores,num)
+final=start.gameRun(play,board,allLetters,playerScores,num)
