@@ -216,13 +216,13 @@ class gameStart(object):
             board=game.makeMove(play,board,allLetters,playerScores)
             if board=='exit':
                 print ("Thank you for playing word-master. We hope you enjoyed your experience!")
-                max=0
+                maximum=0
                 for key,value in playerScores.items():
                     print ('Player '+str(key)+': '+str(value)+ ' points')
-                    if playerScores[key]>max:
-                        max=value
+                    if playerScores[key]>maximum:
+                        maximum=value
                         winner=key
-                print ('Player '+ str(winner)+', with '+str(max)+' points, is the winner!!!!')
+                print ('Player '+ str(winner)+', with '+str(maximum)+' points, is the winner!!!!')
                 break
             play+=1
             if play>=num:
