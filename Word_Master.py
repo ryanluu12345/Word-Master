@@ -222,7 +222,7 @@ class gameStart(object):
                     if playerScores[key]>max:
                         max=value
                         winner=key
-                print ('Player '+ str(winner)+', with '+str(value)+' points, is the winner!!!!')
+                print ('Player '+ str(winner)+', with '+str(max)+' points, is the winner!!!!')
                 break
             play+=1
             if play>=num:
